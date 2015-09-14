@@ -3,17 +3,24 @@ module Pi where
 import Random
 import Signal
 import Graphics.Element exposing (Element, empty, show)
+import Graphics.Collage as Collage
+import Graphics.Collage exposing (Form)
 import String
 import Window
 import Text
 import Time
+import Color
+import Color exposing (Color)
+import List exposing (map)
 
 type alias Point = { x:Float, y:Float }
+
+type alias Size = Float
 
 type alias State = ((Int, List Point), (Int, List Point))
 
 radius : number 
-radius = 3
+radius = 1
 
 initState = ((0,[]), (0,[]))
 
@@ -30,14 +37,36 @@ isInCircle pt =
 hitCount : State -> Int
 hitCount ((count, _), (_, _)) = count
 
+hitPoints : State -> List Point
+hitPoints ((_, points), _) = points
+
 missCount : State -> Int
 missCount ((_, _), (count, _)) = count
+
+missPoints : State -> List Point
+missPoints (_, (_, points)) = points
+
+makeCircleForms : Size -> Color -> List Point -> List Form
+makeCircleForms size color points = map (circleToForm size color) points
+
+circleToForm : Size -> Color -> Point -> Form
+circleToForm size color point = Collage.circle 3 |> Collage.filled color |> Collage.move (point.x * size, point.y * size)
 
 view : (Int,Int) -> State -> Element
 view (w,h) state =
   let total = (toFloat <| missCount <| state) + (toFloat <| hitCount <| state) in
   let ratio = (toFloat <| hitCount <| state) / total in
-  show ("pi is " ++ (toString (ratio * 4)))
+  let floatW = toFloat w in
+  let floatH = toFloat h in
+  let minOfWOrH = toFloat <| min w h in
+  let size = minOfWOrH / 2 in
+
+  let outerRect = Collage.filled Color.lightOrange (Collage.rect size size) in
+  let debugForm = Collage.move (0, size / 2 + 10) <| Collage.toForm <| show ("pi is " ++ (toString (ratio * 4))) in
+  let hitCircleForms = makeCircleForms (size / 2) Color.lightPurple <| hitPoints <| state in
+  let missCircleForms = makeCircleForms (size / 2) Color.red <| missPoints <| state in
+
+  Collage.collage w h (outerRect::debugForm::(List.append hitCircleForms missCircleForms))
 
 genPoint : Random.Seed -> (Point, Random.Seed)
 genPoint s =
