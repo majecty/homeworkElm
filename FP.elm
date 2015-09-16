@@ -43,9 +43,11 @@ additivePersistenceHelper n previousCount =
      else additivePersistenceHelper (sumDigits n) (previousCount + 1)
 
 subsequences : List a -> List (List a)
-subsequences xs =
-  -- TODO
-  []
+subsequences xs = case xs of
+  [] -> [[]]
+  x::xs ->
+    let subResult = subsequences xs in
+    List.append subResult <| List.map (\ys -> x::ys) subResult
 
 take : Int -> List a -> Result String (List a)
 take k xs =
