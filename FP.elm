@@ -14,15 +14,33 @@ digitsOfIntReverse n = case n of
 digitsOfInt : Int -> List Int
 digitsOfInt = List.reverse << digitsOfIntReverse
 
+type alias Additive = { persistence: Int, root: Int }
+
+chainAdditive : Additive -> Additive
+chainAdditive additive  =
+  if additive.root < 10
+     then additive
+     else chainAdditive { persistence = additive.persistence + 1, root = sumDigits additive.root }
+
 additivePersistence : Int -> Int
-additivePersistence n =
-  -- TODO
-  0
+additivePersistence n = .persistence <| chainAdditive { persistence = 0, root = n }
 
 digitalRoot : Int -> Int
-digitalRoot n =
-  -- TODO
-  0
+digitalRoot n = .root <| chainAdditive { persistence = 0, root = n }
+
+sumList : List Int -> Int
+sumList list = case list of
+  [] -> 0
+  x::xs -> x + (sumList xs)
+
+sumDigits : Int -> Int
+sumDigits = sumList << digitsOfInt
+
+additivePersistenceHelper : Int -> Int -> Int
+additivePersistenceHelper n previousCount =
+  if n < 10
+     then previousCount
+     else additivePersistenceHelper (sumDigits n) (previousCount + 1)
 
 subsequences : List a -> List (List a)
 subsequences xs =
