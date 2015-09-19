@@ -51,5 +51,17 @@ subsequences xs = case xs of
 
 take : Int -> List a -> Result String (List a)
 take k xs =
-  -- TODO
-  Err "..."
+  if k < 0
+     then Err "Should give positive number."
+     else takeInternal k xs
+
+takeInternal : Int -> List a -> Result String (List a)
+takeInternal k xs = case (k, xs) of
+  (0, []) -> Ok []
+  (_, []) -> Err "Isufficient list."
+  (0, _) -> Ok []
+  (k, x::xs) ->
+    let subResult = takeInternal (k - 1) xs in
+    case subResult of
+      Err _ -> subResult
+      Ok subResultList -> Ok (x::subResultList)
