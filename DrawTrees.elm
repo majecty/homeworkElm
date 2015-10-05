@@ -10,6 +10,7 @@ import Signal
 import Window
 import Mouse
 import Text as T
+import Time
 import Graphics.Element as E
 import Graphics.Collage as C
 
@@ -38,14 +39,14 @@ sampleListOn source xs =
   Signal.map (\(Just value, state) -> value) valueAndState
 
 view : (Int,Int) -> Tree -> E.Element
-view _ _ =
-  -- TODO
-  E.spacer 0 0
+view (w, h) tree =
+  E.show tree
+  -- E.spacer 0 0
 
 signalTree : Signal Tree
 signalTree =
-  -- TODO
-  Signal.constant Empty
+  let trees = List.concatMap (balancedTrees 0) [1..20] in
+  sampleListOn (Time.fps 16) trees
 
 main : Signal E.Element
 main =
