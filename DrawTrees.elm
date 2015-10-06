@@ -65,7 +65,8 @@ circle = C.filled Color.black <| C.circle 5
 signalTree : Signal Tree
 signalTree =
   let trees = List.concatMap (balancedTrees 0) [1..20] in
-  sampleListOn (Time.fps 10) trees
+--  sampleListOn (Mouse.clicks) trees
+  sampleListOn (Time.fps 30) trees
 
 main : Signal E.Element
 main =
