@@ -40,13 +40,28 @@ sampleListOn source xs =
 
 view : (Int,Int) -> Tree -> E.Element
 view (w, h) tree =
-  E.show tree
+  let allTreeForm = tree2Form tree in
+  C.collage w h [ allTreeForm ]
+  -- E.show tree
   -- E.spacer 0 0
+
+tree2Form : Tree -> C.Form
+tree2Form tree =
+  case tree of
+    Empty -> circle
+
+    Node _ leftTree rightTree ->
+      let left = C.move (-10, -20) <| tree2Form leftTree in
+      let right = C.move (10, -20) <| tree2Form rightTree in
+      C.group [ left, right, circle ]
+
+circle : C.Form
+circle = C.filled Color.black <| C.circle 5
 
 signalTree : Signal Tree
 signalTree =
   let trees = List.concatMap (balancedTrees 0) [1..20] in
-  sampleListOn (Time.fps 16) trees
+  sampleListOn (Time.fps 10) trees
 
 main : Signal E.Element
 main =
