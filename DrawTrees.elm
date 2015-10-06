@@ -40,20 +40,24 @@ sampleListOn source xs =
 
 view : (Int,Int) -> Tree -> E.Element
 view (w, h) tree =
-  let allTreeForm = tree2Form tree in
+  let (_, allTreeForm) = tree2Form tree in
   C.collage w h [ allTreeForm ]
   -- E.show tree
   -- E.spacer 0 0
 
-tree2Form : Tree -> C.Form
+tree2Form : Tree -> (Int, C.Form)
 tree2Form tree =
   case tree of
-    Empty -> circle
+    Empty -> (1, circle)
 
     Node _ leftTree rightTree ->
-      let left = C.move (-10, -20) <| tree2Form leftTree in
-      let right = C.move (10, -20) <| tree2Form rightTree in
-      C.group [ left, right, circle ]
+      let (leftLength, leftTreeForm) = tree2Form leftTree in
+      let (rightLength, rightTreeForm) = tree2Form rightTree in
+      let length = 2 * (max leftLength rightLength) + 2 in
+      let lengthf = toFloat length in
+      let left = C.move (-5 * (lengthf / 2), -20) leftTreeForm in
+      let right = C.move (5 * (lengthf / 2), -20) rightTreeForm in
+      (length, C.group [ left, right, circle ])
 
 circle : C.Form
 circle = C.filled Color.black <| C.circle 5
