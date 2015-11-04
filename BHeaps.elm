@@ -46,21 +46,31 @@ merge_ ts1 ts2 = case (ts1, ts2) of
     if | r1 < r2 -> (r1, t1) :: merge_ ts1' ts2
        | r1 > r2 -> (r2, t2) :: merge_ ts2' ts1
        | otherwise ->
-          let newElem = (r1, (link t1 t2))
-          in
-           insertTree newElem (merge_ ts1' ts2')
+          let newElem = (link (r1, t1) (r2, t2))
+          in 
+             insertTree newElem (merge_ ts1' ts2')
 
 merge : Heap -> Heap -> Heap
 merge (WrapHeap h1) (WrapHeap h2) =
   WrapHeap <| merge_ h1 h2
 
+root : Tree -> Int
+root (Node x _) = x
+
+removeMinTree : InternalHeap -> ((Rank, Tree), InternalHeap)
+removeMinTree ts = case ts of
+  [t] -> (t, [])
+  (r, t)::ts' ->
+    let ((r', t'), ts'') = removeMinTree ts' in
+    if | root t < root t' -> ((r, t), ts')
+       | otherwise -> ((r', t'), (r, t)::ts'')
+
 findMin : Heap -> Maybe Int
-findMin h =
-  -- TODO
-  Nothing
+findMin (WrapHeap ts) = case ts of
+  [] -> Nothing
+  _ -> ts |> removeMinTree |> fst |> snd |> root |> Just
 
 deleteMin : Heap -> Maybe Heap
-deleteMin h =
-  -- TODO
-  Nothing
-
+deleteMin (WrapHeap ts) = case ts of
+  [] -> Nothing
+  _ -> ts |> removeMinTree |> snd |> WrapHeap |> Just
