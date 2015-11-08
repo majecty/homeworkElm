@@ -15,27 +15,39 @@ empty : Heap
 empty = E
 
 isEmpty : Heap -> Bool
-isEmpty _ =
-  -- TODO
-  False
+isEmpty heap = case heap of
+  E -> True
+  _ -> False
 
 insert : Int -> Heap -> Heap
-insert _ _ =
-  -- TODO
-  E
+insert x heap = case heap of
+  E -> NE x <| H.insert x H.empty
+
+  NE previousMin internalHeap ->
+    let newMin = min previousMin x
+    in
+       NE newMin <| H.insert x internalHeap
 
 merge : Heap -> Heap -> Heap
-merge _ _ =
-  -- TODO
-  E
+merge heap1 heap2 = case (heap1, heap2) of
+  (E, _) -> heap2
+  (_, E) -> heap1
+
+  (NE min1 internalHeap1, NE min2 internalHeap2) ->
+    NE (min min1 min2) (H.merge internalHeap1 internalHeap2)
 
 findMin : Heap -> Maybe Int
-findMin _ =
-  -- TODO
-  Nothing
+findMin heap = case heap of
+  E -> Nothing
+  NE min _ -> Just min
 
 deleteMin : Heap -> Maybe Heap
-deleteMin _ =
-  -- TODO
-  Nothing
-
+deleteMin heap = case heap of
+  E -> Nothing
+  NE _ internalHeap ->
+    let maybeNewHeap = H.deleteMin internalHeap
+        maybeNewMin = Maybe.andThen maybeNewHeap H.findMin
+    in
+       case (maybeNewHeap, maybeNewMin) of
+         (Just newHeap, Just newMin) -> NE newMin newHeap |> Just
+         _ -> Nothing
