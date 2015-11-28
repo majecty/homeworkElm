@@ -7,6 +7,8 @@ type alias Pos = {
   , y : Float
   }
 
+type alias Vector = Pos
+
 type alias Elem = {
     pos : Pos
   , view : Collage.Form
