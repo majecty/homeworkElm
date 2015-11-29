@@ -1,6 +1,8 @@
 module MinHeapAnimation where
 
-import Color
+{-|
+  Show min heap animations.
+-}
 import Graphics.Collage as Collage
 import Graphics.Element as Element
 import Graphics.Element exposing (Element)
@@ -10,7 +12,6 @@ import Time as Time
 import Time exposing (Time)
 
 import Box exposing (Box, makeBox)
-import Types exposing (..)
 
 main : Signal Element
 main = Signal.map view modelAtFrame
@@ -40,7 +41,7 @@ type alias DeltaTime = Time
 updateModel : DeltaTime -> Model -> Model
 updateModel dt prevModel =
   let {lovelyBox} = prevModel
-      newLovelyBox = Box.move { x = 1, y=0 } lovelyBox
+      newLovelyBox = Box.move { x = 1, y = 0 } lovelyBox
   in
      { prevModel | lovelyBox = newLovelyBox }
 
