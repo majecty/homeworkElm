@@ -53,6 +53,8 @@ type alias Floor = {
   , allNodes : List Pos
   }
 
+type alias Width = Int
+
 type alias List1 a = {
     head : a
   , all : List a
@@ -66,7 +68,7 @@ makeFloor firstPos poses = { firstNode = firstPos, allNodes = poses }
 --     1      1
 --     2      2
 --     3      4
-widthInRoot : DepthFromRoot -> Int
+widthInRoot : DepthFromRoot -> Width
 widthInRoot d = 2 ^ (d - 1)
 
 -- quest : don't use this.
@@ -87,18 +89,20 @@ gapFromFloor {allNodes} = case allNodes of
   [e] -> minimumGap
   e1 :: e2 :: tail -> e2.x - e1.x
 
-unFold : Int -> a -> (a -> a) -> List1 a
+unFold : Width -> a -> (a -> a) -> List1 a
 unFold length defaultValue nextGenerator =
-  if length <= 0
-     then Debug.crash "Unfold need more than 1 number."
-     else
-      let nextValue = nextGenerator defaultValue
-          nextLength = length - 1
-          subList = unFold nextLength nextValue nextGenerator
-      in
-         { head = defaultValue
-         , all = defaultValue :: (subList.all)
-         }
+  if length <= 0 then
+    Debug.crash "Unfold need more than 1 number."
+  else if length == 1 then
+    { head = defaultValue, all = [defaultValue] }
+  else
+    let nextValue = nextGenerator defaultValue
+        nextLength = length - 1
+        subList = unFold nextLength nextValue nextGenerator
+    in
+      { head = defaultValue
+      , all = defaultValue :: (subList.all)
+      }
 
 calcPoses : NumOfElement -> DepthFromRoot -> List Floor
 calcPoses num d =
