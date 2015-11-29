@@ -11,8 +11,11 @@ import Signal exposing (Signal)
 import Time as Time
 import Time exposing (Time)
 
-import Box exposing (Box, makeBox)
 import Circle exposing (Circle, makeCircle)
+
+-- copied from homework
+import BinaryHeap
+import BinaryHeapViewer
 
 main : Signal Element
 main = Signal.map view modelAtFrame
@@ -22,12 +25,16 @@ main = Signal.map view modelAtFrame
 
 type alias Model = {
     circle : Circle
+  , heap : BinaryHeap.Heap
   }
 
 initModel : Model
 initModel =
      {
        circle = makeCircle { x = 0, y = 10 }
+     , heap = BinaryHeap.insert 3 <|
+         BinaryHeap.insert 3 <|
+         BinaryHeap.empty
      }
 
 fps : Signal Time
@@ -41,5 +48,8 @@ updateModel : DeltaTime -> Model -> Model
 updateModel dt prevModel = prevModel
 
 view : Model -> Element
-view {circle} = Collage.collage 500 500 [ circle.view ]
+view {circle, heap} = Collage.collage 500 500 [
+    circle.view
+  , BinaryHeapViewer.view heap
+  ]
 
