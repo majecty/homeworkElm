@@ -27,9 +27,9 @@ view heap =
      case elems of
        [] -> emptyForm
        _ ->
-         let poses = calcPoses length 1
+         let floors = calcPoses length 1
          in
-            Collage.text <| Text.fromString <| toString poses
+            Collage.text <| Text.fromString <| toString <| List.map .allNodes floors
 
 
 {-|
@@ -48,7 +48,19 @@ type alias NumOfElement = Int
 type alias DepthFromRoot = Int
 type alias Gap = Float
 type alias Height = Float
-type alias Floor = List Pos
+type alias Floor = {
+    firstNode : Pos
+  , allNodes : List Pos
+  }
+
+type alias List1 a = {
+    head : a
+  , all : List a
+  }
+
+makeFloor : Pos -> List Pos -> Floor
+makeFloor firstPos poses = { firstNode = firstPos, allNodes = poses }
+
 -- depth is start from 1
 -- depth  width
 --     1      1
@@ -70,19 +82,23 @@ height : Height
 height = 20
 
 gapFromFloor : Floor -> Gap
-gapFromFloor floor = case floor of
+gapFromFloor {allNodes} = case allNodes of
   [] -> minimumGap
   [e] -> minimumGap
   e1 :: e2 :: tail -> e2.x - e1.x
 
-unFold : Int -> a -> (a -> a) -> List a
-unFold length defaultValue nextGenerator = case length of
-  0 -> []
-  _ ->
-    let nextValue = nextGenerator defaultValue
-        nextLength = length - 1
-    in
-       defaultValue :: (unFold nextLength nextValue nextGenerator)
+unFold : Int -> a -> (a -> a) -> List1 a
+unFold length defaultValue nextGenerator =
+  if length <= 0
+     then Debug.crash "Unfold need more than 1 number."
+     else
+      let nextValue = nextGenerator defaultValue
+          nextLength = length - 1
+          subList = unFold nextLength nextValue nextGenerator
+      in
+         { head = defaultValue
+         , all = defaultValue :: (subList.all)
+         }
 
 calcPoses : NumOfElement -> DepthFromRoot -> List Floor
 calcPoses num d =
@@ -102,7 +118,7 @@ calcPoses num d =
             Nothing -> minimumGap
           startX = case maybeBelowFloor of
             Just belowFloor ->
-              let startOfBelowFloor = List.head belowFloor |> unsafe |> .x
+              let startOfBelowFloor = belowFloor |> .firstNode |> .x
                   belowGap = gapFromFloor belowFloor
               in
                  startOfBelowFloor + (belowGap / 2)
@@ -110,9 +126,12 @@ calcPoses num d =
           xs = unFold width startX (\prevX -> prevX + gap)
           y = case maybeBelowFloor of
             Just belowFloor ->
-              let yOfBelowFloor = List.head belowFloor |> unsafe |> .y
+              let yOfBelowFloor = belowFloor |> .firstNode |> .y
               in
                  yOfBelowFloor - height
             Nothing -> 0
       in
-         (List.map (\x -> makePos x y) xs) :: subResult
+         let allNodes = (List.map (\x -> makePos x y) xs.all)
+             firstNode = makePos (xs.head) y
+         in
+            (makeFloor firstNode allNodes) :: subResult
