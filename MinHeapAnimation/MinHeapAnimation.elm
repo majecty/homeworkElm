@@ -12,6 +12,7 @@ import Time as Time
 import Time exposing (Time)
 
 import Box exposing (Box, makeBox)
+import Circle exposing (Circle, makeCircle)
 
 main : Signal Element
 main = Signal.map view modelAtFrame
@@ -20,15 +21,13 @@ main = Signal.map view modelAtFrame
 --main = Element.show <| Box.move {x=1, y=0} <| makeBox {x=1, y=1}
 
 type alias Model = {
-    lovelyBox : Box
-  , sadBox : Box
+    circle : Circle
   }
 
 initModel : Model
 initModel =
      {
-       lovelyBox = makeBox { x=0, y=0 }
-     , sadBox = makeBox { x=50, y=50 }
+       circle = makeCircle { x = 0, y = 10 }
      }
 
 fps : Signal Time
@@ -39,12 +38,8 @@ modelAtFrame = Signal.foldp updateModel initModel fps
 
 type alias DeltaTime = Time
 updateModel : DeltaTime -> Model -> Model
-updateModel dt prevModel =
-  let {lovelyBox} = prevModel
-      newLovelyBox = Box.move { x = 1, y = 0 } lovelyBox
-  in
-     { prevModel | lovelyBox = newLovelyBox }
+updateModel dt prevModel = prevModel
 
 view : Model -> Element
-view {lovelyBox, sadBox} = Collage.collage 500 500 [ lovelyBox.view, sadBox.view ]
+view {circle} = Collage.collage 500 500 [ circle.view ]
 
