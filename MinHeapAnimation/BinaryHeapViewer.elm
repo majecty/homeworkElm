@@ -48,6 +48,7 @@ type alias NumOfElement = Int
 type alias DepthFromRoot = Int
 type alias Gap = Float
 type alias Height = Float
+type alias Floor = List Pos
 -- depth is start from 1
 -- depth  width
 --     1      1
@@ -68,7 +69,7 @@ minimumGap = 10 -- means 10 pixel
 height : Height
 height = 20
 
-gapFromFloor : List Pos -> Gap
+gapFromFloor : Floor -> Gap
 gapFromFloor floor = case floor of
   [] -> minimumGap
   [e] -> minimumGap
@@ -83,7 +84,7 @@ unFold length defaultValue nextGenerator = case length of
     in
        defaultValue :: (unFold nextLength nextValue nextGenerator)
 
-calcPoses : NumOfElement -> DepthFromRoot -> List (List Pos)
+calcPoses : NumOfElement -> DepthFromRoot -> List Floor
 calcPoses num d =
   if num <= 0
      then []
