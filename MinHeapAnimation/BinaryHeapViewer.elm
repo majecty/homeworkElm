@@ -28,9 +28,14 @@ view heap =
        [] -> emptyForm
        _ ->
          let floors = calcPoses length 1
+             allNodes = List.map .allNodes floors |> List.concat
+             allForms = List.map2 showElement elems allNodes
          in
-            Collage.text <| Text.fromString <| toString <| List.map .allNodes floors
+            Collage.group allForms
 
+showElement : Int -> Pos -> Collage.Form
+showElement value position =
+  Collage.move (position.x, position.y) <| Collage.text <| Text.fromString <| toString value
 
 {-|
   floor : tree elements which has same depth
@@ -78,7 +83,7 @@ unsafe maybeA = case maybeA of
   Nothing -> Debug.crash "Impossible get from empty."
 
 minimumGap : Gap
-minimumGap = 10 -- means 10 pixel
+minimumGap = 20 -- means 20 pixel
 
 height : Height
 height = 20
@@ -132,7 +137,7 @@ calcPoses num d =
             Just belowFloor ->
               let yOfBelowFloor = belowFloor |> .firstNode |> .y
               in
-                 yOfBelowFloor - height
+                 yOfBelowFloor + height
             Nothing -> 0
       in
          let allNodes = (List.map (\x -> makePos x y) xs.all)

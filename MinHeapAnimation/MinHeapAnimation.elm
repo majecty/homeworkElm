@@ -28,13 +28,16 @@ type alias Model = {
   , heap : BinaryHeap.Heap
   }
 
+makeHeap : List Int -> BinaryHeap.Heap
+makeHeap xs = case xs of
+  [] -> BinaryHeap.empty
+  x::xs' -> BinaryHeap.insert x <| makeHeap xs'
+
 initModel : Model
 initModel =
      {
        circle = makeCircle { x = 0, y = 10 }
-     , heap = BinaryHeap.insert 3 <|
-         BinaryHeap.insert 3 <|
-         BinaryHeap.empty
+     , heap = makeHeap [1..99]
      }
 
 fps : Signal Time
@@ -48,7 +51,7 @@ updateModel : DeltaTime -> Model -> Model
 updateModel dt prevModel = prevModel
 
 view : Model -> Element
-view {circle, heap} = Collage.collage 500 500 [
+view {circle, heap} = Collage.collage 800 600 [
     circle.view
   , BinaryHeapViewer.view heap
   ]
