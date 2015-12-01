@@ -12,6 +12,7 @@ import Time as Time
 import Time exposing (Time)
 
 import Circle exposing (Circle, makeCircle)
+import Global
 
 -- copied from homework
 import BinaryHeap
@@ -37,7 +38,7 @@ initModel : Model
 initModel =
      {
        circle = makeCircle { x = 0, y = 10 }
-     , heap = makeHeap [1..99]
+     , heap = makeHeap [1..50]
      }
 
 fps : Signal Time
@@ -51,7 +52,7 @@ updateModel : DeltaTime -> Model -> Model
 updateModel dt prevModel = prevModel
 
 view : Model -> Element
-view {circle, heap} = Collage.collage 800 600 [
+view {circle, heap} = Collage.collage Global.width Global.height [
     circle.view
   , BinaryHeapViewer.view heap
   ]

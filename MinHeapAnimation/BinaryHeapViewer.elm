@@ -6,6 +6,7 @@ import Maybe
 import Text
 
 import BinaryHeap
+import Boundary
 import Pos exposing (makePos)
 import Types exposing (..)
 
@@ -30,8 +31,10 @@ view heap =
          let floors = calcPoses length 1
              allNodes = List.map .allNodes floors |> List.concat
              allForms = List.map2 showElement elems allNodes
+             boundary = Boundary.getBoundary allNodes
+             middlePos = Boundary.middlePos boundary
          in
-            Collage.group allForms
+            Collage.move (-middlePos.x, -middlePos.y) <| Collage.group allForms
 
 showElement : Int -> Pos -> Collage.Form
 showElement value position =

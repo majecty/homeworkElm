@@ -13,3 +13,10 @@ type alias Elem = {
     pos : Pos
   , view : Collage.Form
   }
+
+type alias Boundary = {
+    minX : Float
+  , maxX : Float
+  , minY : Float
+  , maxY : Float
+  }
