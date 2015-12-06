@@ -16,7 +16,7 @@ type alias Circle = {
 
 makeCircle : Pos -> Circle
 makeCircle {x, y} =
-  let pos = makePos x y 
+  let pos = makePos x y
       color = Color.black
       view = makeView pos
   in

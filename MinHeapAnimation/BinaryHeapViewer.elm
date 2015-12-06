@@ -1,5 +1,10 @@
 module BinaryHeapViewer(view) where
 
+{-| Make binaryheap to Collage.Form
+
+@docs view
+-}
+
 import Array
 import Graphics.Collage as Collage
 import Maybe
@@ -9,6 +14,8 @@ import BinaryHeap
 import Boundary
 import Pos exposing (makePos)
 import Types exposing (..)
+
+import BinaryHeapAnimation exposing (Animation)
 
 emptyForm : Collage.Form
 emptyForm = Collage.text <| Text.fromString "Empty"
@@ -20,8 +27,10 @@ elements heap =
   in
     internalList
 
-view : BinaryHeap.Heap -> Collage.Form
-view heap =
+{-| Make form using BinaryHeap
+-}
+view : BinaryHeap.Heap -> Animation Collage.Form
+view heap = BinaryHeapAnimation.empty <|
   let elems = elements heap
       length = List.length elems
   in
@@ -40,18 +49,16 @@ showElement : Int -> Pos -> Collage.Form
 showElement value position =
   Collage.move (position.x, position.y) <| Collage.text <| Text.fromString <| toString value
 
-{-|
-  floor : tree elements which has same depth
-  depth : distances from root + 1
-          root has depth 1
-  width : length of floor
-  gap   : gap between same floor nodes when printed
-  minimumGap : last floor's gap
-               although floor has just 1 element, it has the minimum gap.
-  height : difference of y position between 2 floors.
-           this value is always same in tree.
+{-| floor : tree elements which has same depth
+    depth : distances from root + 1
+            root has depth 1
+    width : length of floor
+    gap   : gap between same floor nodes when printed
+    minimumGap : last floor's gap
+                 although floor has just 1 element, it has the minimum gap.
+    height : difference of y position between 2 floors.
+             this value is always same in tree.
 -}
-
 type alias NumOfElement = Int
 type alias DepthFromRoot = Int
 type alias Gap = Float

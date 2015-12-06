@@ -13,9 +13,11 @@ import Time exposing (Time)
 
 import Circle exposing (Circle, makeCircle)
 import Global
+import Types exposing (..)
 
 -- copied from homework
 import BinaryHeap
+import BinaryHeapAnimation
 import BinaryHeapViewer
 
 main : Signal Element
@@ -44,16 +46,32 @@ initModel =
 fps : Signal Time
 fps = Time.fps 30
 
-modelAtFrame : Signal Model
-modelAtFrame = Signal.foldp updateModel initModel fps
+modelAtFrame : Signal (DeltaTime, Model)
+modelAtFrame = Signal.foldp (\t (_, model) -> (t, updateModel t model)) (0, initModel) fps
 
-type alias DeltaTime = Time
 updateModel : DeltaTime -> Model -> Model
 updateModel dt prevModel = prevModel
 
-view : Model -> Element
-view {circle, heap} = Collage.collage Global.width Global.height [
+view : (DeltaTime, Model) -> Element
+view (dt, {circle, heap}) =
+  Collage.collage Global.width Global.height [
     circle.view
-  , BinaryHeapViewer.view heap
+  , BinaryHeapAnimation.run (BinaryHeapAnimation.initState dt) <| BinaryHeapViewer.view heap
   ]
 
+{-|
+ Binary heap animation.
+ bubbleDown
+ bubbleUp
+
+ deleteMin :
+ 1: take last element as x
+ 2: set first element to x
+ 3: bubble down from first element
+
+ bubbleDown :
+ 1: compar i and two children
+ 2: find minimum of i and two children
+ 3: if i is minimum then exit
+    else swap minimum and i
+-}

@@ -1,5 +1,6 @@
 module Types where
 
+import Time exposing (Time)
 import Graphics.Collage as Collage
 
 type alias Pos = {
@@ -20,3 +21,5 @@ type alias Boundary = {
   , minY : Float
   , maxY : Float
   }
+
+type alias DeltaTime = Time

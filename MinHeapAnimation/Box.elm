@@ -16,7 +16,7 @@ type alias Box = {
 
 makeBox : Pos -> Box
 makeBox {x, y} =
-  let pos = makePos x y 
+  let pos = makePos x y
       color = Color.black
       view = makeView pos
   in
