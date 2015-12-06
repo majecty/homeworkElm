@@ -1,4 +1,4 @@
-module BinaryHeap
+module BinaryHeap.BinaryHeap
   (Heap, empty, isEmpty, findMin, insert, deleteMin, merge
   , getInternalArray) where
 

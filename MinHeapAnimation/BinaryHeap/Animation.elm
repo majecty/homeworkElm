@@ -1,9 +1,9 @@
-module BinaryHeapAnimation(initState, empty, run, animateElement) where
+module BinaryHeap.Animation(initState, empty, run, animateElement) where
 
 import Graphics.Collage as Collage
 import Types exposing (..)
 
-import BinaryHeapTypes exposing(..)
+import BinaryHeap.Types exposing(..)
 
 initState : DeltaTime -> AnimationState
 initState dt = { type_ = Idle, deltaTime = dt }

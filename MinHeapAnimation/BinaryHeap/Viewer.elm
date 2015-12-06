@@ -1,4 +1,4 @@
-module BinaryHeapViewer(view) where
+module BinaryHeap.Viewer(view) where
 
 {-| Make binaryheap to Collage.Form
 
@@ -14,9 +14,9 @@ import Boundary
 import Pos exposing (makePos)
 import Types exposing (..)
 
-import BinaryHeap
-import BinaryHeapTypes exposing (..)
-import BinaryHeapAnimation
+import BinaryHeap.BinaryHeap as BinaryHeap
+import BinaryHeap.Types exposing (..)
+import BinaryHeap.Animation as Animation
 
 emptyForm : Collage.Form
 emptyForm = Collage.text <| Text.fromString "Empty"
@@ -31,13 +31,13 @@ elements heap =
 {-| Make form using BinaryHeap
 -}
 
-view : BinaryHeapTypes.Model -> Animation Collage.Form
+view : Model -> Animation Collage.Form
 view heap = case heap of
   Stable {heap} -> viewStable heap
   _ -> Debug.crash "Not Implemented Yet."
 
 viewStable : InternalHeap -> Animation Collage.Form
-viewStable heap = BinaryHeapAnimation.empty <|
+viewStable heap = Animation.empty <|
   let elems = elements heap
       length = List.length elems
   in

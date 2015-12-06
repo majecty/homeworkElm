@@ -1,6 +1,6 @@
-module BinaryHeapTypes where
+module BinaryHeap.Types where
 
-import BinaryHeap
+import BinaryHeap.BinaryHeap as BinaryHeap
 import Types exposing (..)
 
 type alias InternalHeap = BinaryHeap.Heap

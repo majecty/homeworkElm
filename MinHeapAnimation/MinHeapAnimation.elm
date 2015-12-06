@@ -16,11 +16,11 @@ import Global
 import Types exposing (..)
 
 -- copied from homework
-import BinaryHeap
-import BinaryHeapAnimation
-import BinaryHeapModel
-import BinaryHeapTypes
-import BinaryHeapViewer
+import BinaryHeap.BinaryHeap as BinaryHeap
+import BinaryHeap.Animation as BinaryHeapAnimation
+import BinaryHeap.Model as BinaryHeapModel
+import BinaryHeap.Types as BinaryHeapTypes
+import BinaryHeap.Viewer as BinaryHeapViewer
 
 main : Signal Element
 main = Signal.map view modelAtFrame
