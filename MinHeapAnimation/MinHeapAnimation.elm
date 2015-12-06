@@ -18,6 +18,8 @@ import Types exposing (..)
 -- copied from homework
 import BinaryHeap
 import BinaryHeapAnimation
+import BinaryHeapModel
+import BinaryHeapTypes
 import BinaryHeapViewer
 
 main : Signal Element
@@ -28,13 +30,17 @@ main = Signal.map view modelAtFrame
 
 type alias Model = {
     circle : Circle
-  , heap : BinaryHeap.Heap
+  , heap : BinaryHeapTypes.Model
   }
 
-makeHeap : List Int -> BinaryHeap.Heap
-makeHeap xs = case xs of
+makeHeap : List Int -> BinaryHeapTypes.Model
+makeHeap xs = BinaryHeapModel.make <| makeHeapInternal xs
+
+makeHeapInternal : List Int -> BinaryHeap.Heap
+makeHeapInternal xs = case xs of
   [] -> BinaryHeap.empty
-  x::xs' -> BinaryHeap.insert x <| makeHeap xs'
+  x::xs' -> BinaryHeap.insert x <| makeHeapInternal xs'
+
 
 initModel : Model
 initModel =

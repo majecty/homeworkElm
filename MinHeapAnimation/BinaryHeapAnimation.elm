@@ -1,23 +1,17 @@
-module BinaryHeapAnimation where
+module BinaryHeapAnimation(initState, empty, run, animateElement) where
 
 import Graphics.Collage as Collage
 import Types exposing (..)
 
-type Type = Idle
-type alias State = {
-    type_ : Type
-  , deltaTime : DeltaTime
-  }
+import BinaryHeapTypes exposing(..)
 
-type Animation a = Animation (State -> a)
-
-initState : DeltaTime -> State
+initState : DeltaTime -> AnimationState
 initState dt = { type_ = Idle, deltaTime = dt }
 
 empty : a -> Animation a
 empty a = Animation <| \_ -> a
 
-run : State -> Animation a -> a
+run : AnimationState -> Animation a -> a
 run state (Animation job) = job state
 
 animateElement : Collage.Form -> Animation Collage.Form

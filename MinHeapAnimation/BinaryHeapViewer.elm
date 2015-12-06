@@ -10,17 +10,18 @@ import Graphics.Collage as Collage
 import Maybe
 import Text
 
-import BinaryHeap
 import Boundary
 import Pos exposing (makePos)
 import Types exposing (..)
 
-import BinaryHeapAnimation exposing (Animation)
+import BinaryHeap
+import BinaryHeapTypes exposing (..)
+import BinaryHeapAnimation
 
 emptyForm : Collage.Form
 emptyForm = Collage.text <| Text.fromString "Empty"
 
-elements : BinaryHeap.Heap -> List Int
+elements : InternalHeap -> List Int
 elements heap =
   let internalArray = BinaryHeap.getInternalArray heap
       internalList = Array.toList internalArray
@@ -29,8 +30,14 @@ elements heap =
 
 {-| Make form using BinaryHeap
 -}
-view : BinaryHeap.Heap -> Animation Collage.Form
-view heap = BinaryHeapAnimation.empty <|
+
+view : BinaryHeapTypes.Model -> Animation Collage.Form
+view heap = case heap of
+  Stable {heap} -> viewStable heap
+  _ -> Debug.crash "Not Implemented Yet."
+
+viewStable : InternalHeap -> Animation Collage.Form
+viewStable heap = BinaryHeapAnimation.empty <|
   let elems = elements heap
       length = List.length elems
   in
