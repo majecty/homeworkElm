@@ -38,20 +38,25 @@ view heap = case heap of
   _ -> Debug.crash "Not Implemented Yet."
 
 viewStable : InternalHeap -> Animation Collage.Form
-viewStable heap = Animation.empty <|
+viewStable heap =
   let elems = elements heap
       length = List.length elems
   in
      case elems of
-       [] -> emptyForm
+       [] -> Animation.empty emptyForm
        _ ->
          let floors = calcPoses length 1
              allNodes = List.map .allNodes floors |> List.concat
              allForms = List.map2 showElement elems allNodes
+             animationForms =
+               Animation.merge <|
+                 List.map Animation.animateElement allForms
              boundary = Boundary.getBoundary allNodes
              middlePos = Boundary.middlePos boundary
          in
-            Collage.move (-middlePos.x, -middlePos.y) <| Collage.group allForms
+            Animation.map (\forms ->
+              Collage.move (-middlePos.x, -middlePos.y)
+                <| Collage.group forms) animationForms
 
 showElement : Int -> Pos -> Collage.Form
 showElement value position =

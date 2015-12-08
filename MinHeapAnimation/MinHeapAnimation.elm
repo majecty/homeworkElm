@@ -17,7 +17,6 @@ import Types exposing (..)
 
 -- copied from homework
 import BinaryHeap.BinaryHeap as BinaryHeap
-import BinaryHeap.Animation as BinaryHeapAnimation
 import BinaryHeap.Model as BinaryHeapModel
 import BinaryHeap.Types as BinaryHeapTypes
 import BinaryHeap.Viewer as BinaryHeapViewer
@@ -56,7 +55,10 @@ modelAtFrame : Signal (DeltaTime, Model)
 modelAtFrame = Signal.foldp (\t (_, model) -> (t, updateModel t model)) (0, initModel) fps
 
 updateModel : DeltaTime -> Model -> Model
-updateModel dt prevModel = prevModel
+updateModel dt prevModel = {
+    circle = prevModel.circle
+  , heap = BinaryHeapModel.update dt prevModel.heap
+  }
 
 view : (DeltaTime, Model) -> Element
 view (dt, {circle, heap}) =
