@@ -62,7 +62,7 @@ view : (DeltaTime, Model) -> Element
 view (dt, {circle, heap}) =
   Collage.collage Global.width Global.height [
     circle.view
-  , BinaryHeapAnimation.run (BinaryHeapAnimation.initState dt) <| BinaryHeapViewer.view heap
+  , BinaryHeapViewer.view heap
   ]
 
 {-|

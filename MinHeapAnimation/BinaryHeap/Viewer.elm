@@ -31,9 +31,10 @@ elements heap =
 {-| Make form using BinaryHeap
 -}
 
-view : Model -> Animation Collage.Form
+view : Model -> Collage.Form
 view heap = case heap of
-  Stable {heap} -> viewStable heap
+  Stable {heap, animationState} ->
+    Animation.run animationState <| viewStable heap
   _ -> Debug.crash "Not Implemented Yet."
 
 viewStable : InternalHeap -> Animation Collage.Form
