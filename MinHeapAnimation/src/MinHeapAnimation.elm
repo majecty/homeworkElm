@@ -65,6 +65,7 @@ view (dt, {circle, heap}) =
   Collage.collage Global.width Global.height [
     circle.view
   , BinaryHeapViewer.view heap
+  --, show button
   ]
 
 {-|
