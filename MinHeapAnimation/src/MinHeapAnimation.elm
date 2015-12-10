@@ -40,7 +40,6 @@ makeHeapInternal xs = case xs of
   [] -> BinaryHeap.empty
   x::xs' -> BinaryHeap.insert x <| makeHeapInternal xs'
 
-
 initModel : Model
 initModel =
      {
@@ -52,19 +51,36 @@ fps : Signal Time
 fps = Time.fps 30
 
 type alias Frame = {
-    fps : DeltaTime
+    dt : DeltaTime
   , insert : Bool
   }
 
 makeFrame : DeltaTime -> Bool -> Frame
-makeFrame dt insert = { fps = dt, insert = insert }
+makeFrame dt insert = { dt = dt, insert = insert }
+
+type ButtonOrTime = Button | Time
+
+type alias RemainTurn = Int
 
 buttonClickedPerFrame : Signal a -> Signal Bool
 buttonClickedPerFrame buttonSignal =
-  let afterButton = Signal.foldp (\_ _ -> True) False buttonSignal
-      afterFps = Signal.foldp (\_ _ -> False) False fps
+  Signal.map fst <| buttonClickedPerFrameInternal buttonSignal
+
+buttonClickedPerFrameInternal : Signal a -> Signal (Bool, RemainTurn)
+buttonClickedPerFrameInternal buttonSignal =
+  let button = Signal.map (\_ -> Button) buttonSignal
+      time = Signal.map (\_ -> Time) fps
+      merged = Signal.merge button time
+      state = Signal.foldp
+        (\event prev -> case (event, prev) of
+          (Button, _) -> (True, 1)
+          (Time, (_, 0)) -> (False, 0)
+          (Time, (prevBool, remain)) -> (prevBool, remain - 1)
+        )
+        (False, 0)
+        merged
   in
-    Signal.sampleOn fps afterFps
+    Signal.sampleOn fps state
 
 inputEvent : Signal Frame
 inputEvent =
@@ -74,13 +90,20 @@ inputEvent =
     Signal.sampleOn fps merged
 
 modelAtFrame : Signal Model
-modelAtFrame = Signal.foldp (\t model -> updateModel t model) initModel fps
+modelAtFrame = Signal.foldp (\event model -> updateModel event model) initModel inputEvent
 
-updateModel : DeltaTime -> Model -> Model
-updateModel dt prevModel = {
-    circle = prevModel.circle
-  , heap = BinaryHeapModel.update dt prevModel.heap
-  }
+updateModel : Frame -> Model -> Model
+updateModel {dt, insert} prevModel = case insert of
+  False -> {
+      circle = prevModel.circle
+    , heap = BinaryHeapModel.update dt prevModel.heap
+    }
+  True ->
+    let insertedHeap = BinaryHeapModel.insert 0 prevModel.heap
+    in {
+        circle = prevModel.circle
+      , heap = BinaryHeapModel.update dt insertedHeap
+      }
 
 view : Model -> Element
 view {circle, heap} =
