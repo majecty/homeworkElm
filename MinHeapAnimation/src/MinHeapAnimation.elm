@@ -51,8 +51,30 @@ initModel =
 fps : Signal Time
 fps = Time.fps 30
 
-modelAtFrame : Signal (DeltaTime, Model)
-modelAtFrame = Signal.foldp (\t (_, model) -> (t, updateModel t model)) (0, initModel) fps
+type alias Frame = {
+    fps : DeltaTime
+  , insert : Bool
+  }
+
+makeFrame : DeltaTime -> Bool -> Frame
+makeFrame dt insert = { fps = dt, insert = insert }
+
+buttonClickedPerFrame : Signal a -> Signal Bool
+buttonClickedPerFrame buttonSignal =
+  let afterButton = Signal.foldp (\_ _ -> True) False buttonSignal
+      afterFps = Signal.foldp (\_ _ -> False) False fps
+  in
+    Signal.sampleOn fps afterFps
+
+inputEvent : Signal Frame
+inputEvent =
+  let insert = buttonClickedPerFrame (.signal Button.message)
+      merged = Signal.map2 makeFrame fps insert
+  in
+    Signal.sampleOn fps merged
+
+modelAtFrame : Signal Model
+modelAtFrame = Signal.foldp (\t model -> updateModel t model) initModel fps
 
 updateModel : DeltaTime -> Model -> Model
 updateModel dt prevModel = {
@@ -60,8 +82,8 @@ updateModel dt prevModel = {
   , heap = BinaryHeapModel.update dt prevModel.heap
   }
 
-view : (DeltaTime, Model) -> Element
-view (dt, {circle, heap}) =
+view : Model -> Element
+view {circle, heap} =
   let tree =
         Collage.collage Global.width Global.height [
           circle.view
