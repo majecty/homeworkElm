@@ -6,20 +6,20 @@ module MinHeapAnimation where
 import Graphics.Collage as Collage
 import Graphics.Element as Element
 import Graphics.Element exposing (Element)
+import Graphics.Input as Input
 import Signal as Signal
 import Signal exposing (Signal)
 import Time as Time
 import Time exposing (Time)
 
-import Circle exposing (Circle, makeCircle)
-import Global
-import Types exposing (..)
-
--- copied from homework
 import BinaryHeap.BinaryHeap as BinaryHeap
 import BinaryHeap.Model as BinaryHeapModel
 import BinaryHeap.Types as BinaryHeapTypes
 import BinaryHeap.Viewer as BinaryHeapViewer
+import Circle exposing (Circle, makeCircle)
+import Global
+import Types exposing (..)
+import UI.Button as Button
 
 main : Signal Element
 main = Signal.map view modelAtFrame
@@ -62,11 +62,19 @@ updateModel dt prevModel = {
 
 view : (DeltaTime, Model) -> Element
 view (dt, {circle, heap}) =
-  Collage.collage Global.width Global.height [
-    circle.view
-  , BinaryHeapViewer.view heap
-  --, show button
-  ]
+  let tree =
+        Collage.collage Global.width Global.height [
+          circle.view
+        , BinaryHeapViewer.view heap
+        ]
+      button =
+        Input.button
+          (Signal.message
+            (.address Button.message)
+            Button.Nothing)
+          "insert"
+    in
+      Element.beside tree button
 
 {-|
  Binary heap animation.
