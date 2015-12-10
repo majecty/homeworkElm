@@ -32,19 +32,11 @@ type alias Model = {
   , heap : BinaryHeapTypes.Model
   }
 
-makeHeap : List Int -> BinaryHeapTypes.Model
-makeHeap xs = BinaryHeapModel.make <| makeHeapInternal xs
-
-makeHeapInternal : List Int -> BinaryHeap.Heap
-makeHeapInternal xs = case xs of
-  [] -> BinaryHeap.empty
-  x::xs' -> BinaryHeap.insert x <| makeHeapInternal xs'
-
 initModel : Model
 initModel =
      {
        circle = makeCircle { x = 0, y = 10 }
-     , heap = makeHeap [1..50]
+     , heap = BinaryHeapModel.makeHeap [1..50]
      }
 
 fps : Signal Time

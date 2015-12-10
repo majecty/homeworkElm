@@ -25,3 +25,11 @@ insert element prevModel = case prevModel of
         heap = BinaryHeap.insert element model.heap
       }
     Transition _ -> Debug.crash "Invalid operation."
+
+makeHeap : List Int -> Model
+makeHeap xs = make <| makeHeapInternal xs
+
+makeHeapInternal : List Int -> BinaryHeap.Heap
+makeHeapInternal xs = case xs of
+  [] -> BinaryHeap.empty
+  x::xs' -> BinaryHeap.insert x <| makeHeapInternal xs'
