@@ -23,3 +23,8 @@ type alias Boundary = {
   }
 
 type alias DeltaTime = Time
+
+type alias Frame = {
+    dt : DeltaTime
+  , insert : Bool
+  }

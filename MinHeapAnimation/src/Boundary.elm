@@ -2,7 +2,9 @@ module Boundary(getBoundary, middlePos) where
 
 import Types exposing (..)
 
+floatMax : Float
 floatMax = 3.402823e+38
+floatMin : Float
 floatMin = -3.402823e+38
 
 initialBoundary : Boundary
